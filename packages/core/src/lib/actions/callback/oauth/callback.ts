@@ -144,6 +144,11 @@ export async function handleOAuth(
     }
 
     profile = o.getValidatedIdTokenClaims(result)
+
+    if (provider.profileConform) {
+      profile = provider.profileConform(profile, query);
+    }
+
     tokens = result
   } else {
     tokens = await o.processAuthorizationCodeOAuth2Response(
@@ -194,7 +199,7 @@ export async function getUserAndAccount(
   OAuthProfile: Profile,
   provider: OAuthConfigInternal<any>,
   tokens: TokenSet,
-  logger: LoggerInstance
+  logger: LoggerInstance,
 ) {
   try {
     const userFromProfile = await provider.profile(OAuthProfile, tokens)

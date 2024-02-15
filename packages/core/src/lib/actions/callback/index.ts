@@ -53,7 +53,7 @@ export async function callback(
   try {
     if (provider.type === "oauth" || provider.type === "oidc") {
       const { proxyRedirect, randomState } = handleState(
-        query,
+        provider.authorization?.url.searchParams.get("response_mode") === 'form_post' ? body : query,
         provider,
         options.isOnRedirectProxy
       )
@@ -64,7 +64,7 @@ export async function callback(
       }
 
       const authorizationResult = await handleOAuth(
-        query,
+        provider.authorization?.url.searchParams.get("response_mode") === 'form_post' ? body : query,
         request.cookies,
         options,
         randomState
@@ -178,9 +178,8 @@ export async function callback(
       // Note that the callback URL is preserved, so the journey can still be resumed
       if (isNewUser && pages.newUser) {
         return {
-          redirect: `${pages.newUser}${
-            pages.newUser.includes("?") ? "&" : "?"
-          }${new URLSearchParams({ callbackUrl })}`,
+          redirect: `${pages.newUser}${pages.newUser.includes("?") ? "&" : "?"
+            }${new URLSearchParams({ callbackUrl })}`,
           cookies,
         }
       }
@@ -290,9 +289,8 @@ export async function callback(
       // Note that the callback URL is preserved, so the journey can still be resumed
       if (isNewUser && pages.newUser) {
         return {
-          redirect: `${pages.newUser}${
-            pages.newUser.includes("?") ? "&" : "?"
-          }${new URLSearchParams({ callbackUrl })}`,
+          redirect: `${pages.newUser}${pages.newUser.includes("?") ? "&" : "?"
+            }${new URLSearchParams({ callbackUrl })}`,
           cookies,
         }
       }
